@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
 import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedEntityGraphs;
+import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
@@ -40,6 +41,9 @@ public class Produto {
 	@NotEmpty
 	private String linkDaFoto;
 	
+	@Version
+	private int versao;
+	
 	@NotEmpty
 	@Column(columnDefinition="TEXT")
 	private String descricao;
@@ -48,11 +52,18 @@ public class Produto {
 	private double preco;
 	
 	@ManyToMany
-	@JoinTable(name="CATEGORIA_PRODUTO" )
 	List<Categoria> categorias = new ArrayList<>();
 	
 	public List<Categoria> getCategorias() {
 		return categorias;
+	}
+	
+	public int getVersao() {
+		return versao;
+	}
+	
+	public void setVersao(int versao) {
+		this.versao = versao;
 	}
 
 	public void setCategorias(List<Categoria> categorias) {
