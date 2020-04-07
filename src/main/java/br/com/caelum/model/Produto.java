@@ -1,6 +1,7 @@
 
 package br.com.caelum.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -8,13 +9,27 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
+import javax.persistence.NamedEntityGraphs;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
+@NamedEntityGraphs({
+    @NamedEntityGraph(name = "produtoComCategoria", 
+                      attributeNodes = { 
+                            @NamedAttributeNode("categorias") 
+                      }) 
+})
+
 @Entity
+@DynamicUpdate
 public class Produto {
 
 	@Id
@@ -32,7 +47,18 @@ public class Produto {
 	@Min(20)
 	private double preco;
 	
+	@ManyToMany
+	@JoinTable(name="CATEGORIA_PRODUTO" )
+	List<Categoria> categorias = new ArrayList<>();
 	
+	public List<Categoria> getCategorias() {
+		return categorias;
+	}
+
+	public void setCategorias(List<Categoria> categorias) {
+		this.categorias = categorias;
+	}
+
 	@Valid
 	@ManyToOne
 	private Loja loja;
@@ -48,11 +74,11 @@ public class Produto {
 	
 	//método auxiliar para associar categorias com o produto
 	//se funcionar apos ter definido o relacionamento entre produto e categoria
-//	public void adicionarCategorias(Categoria... categorias) {
-//		for (Categoria categoria : categorias) {
-//			this.categorias.add(categoria);
-//		}
-//	}
+	public void adicionarCategorias(Categoria... categorias) {
+		for (Categoria categoria : categorias) {
+			this.categorias.add(categoria);
+		}
+	}
 
 	public String getLinkDaFoto() {
 		return linkDaFoto;
