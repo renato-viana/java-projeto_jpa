@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedAttributeNode;
@@ -19,6 +18,8 @@ import javax.persistence.Version;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -30,6 +31,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 })
 
 @Entity
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @DynamicUpdate
 public class Produto {
 
@@ -52,6 +54,7 @@ public class Produto {
 	private double preco;
 	
 	@ManyToMany
+	@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 	List<Categoria> categorias = new ArrayList<>();
 	
 	public List<Categoria> getCategorias() {

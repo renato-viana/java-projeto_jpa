@@ -38,15 +38,16 @@ public class ProdutoDao {
 		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Produto> query = criteriaBuilder.createQuery(Produto.class);
 		Root<Produto> root = query.from(Produto.class);
+		query.distinct(true);
 
 		Path<String> nomePath = root.<String> get("nome");
-		Path<Integer> lojaPath = root.<Loja> get("loja").<Integer> get("id");
 		Path<Integer> categoriaPath = root.join("categorias").<Integer> get("id");
+		Path<Integer> lojaPath = root.<Loja> get("loja").<Integer> get("id");
 
-		List<Predicate> predicates = new ArrayList<>();
+		List<Predicate> predicates = new ArrayList<Predicate>();
 
 		if (!nome.isEmpty()) {
-			Predicate nomeIgual = criteriaBuilder.like(nomePath, nome);
+			Predicate nomeIgual = criteriaBuilder.like(nomePath, "%" + nome + "%");
 			predicates.add(nomeIgual);
 		}
 		if (categoriaId != null) {
@@ -59,8 +60,9 @@ public class ProdutoDao {
 		}
 
 		query.where((Predicate[]) predicates.toArray(new Predicate[0]));
-
+		
 		TypedQuery<Produto> typedQuery = em.createQuery(query);
+		typedQuery.setHint("org.hibernate.cacheable", "true");
 		return typedQuery.getResultList();
 
 	}
